@@ -1,35 +1,55 @@
 version: '3'
-
 services:
   rabbitmq:
     image: "rabbitmq:3-management"
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
       - 'rabbitmq_data:/data'
+    networks:
+      - recommendation-network
+      - shared_network
 
   redis:
     image: redis:alpine
+    container_name: redis
     restart: always
     command: /bin/sh -c "redis-server --requirepass $$REDIS_HOST_PASSWORD"
     ports:
       - "6379:6379"
     environment:
-        - REDIS_HOST_PASSWORD=redis
+      - REDIS_HOST_PASSWORD=redis
     volumes:
       - 'redis_data:/data'
+    networks:
+      - recommendation-network
+      - shared_network
 
   recommendation-service:
     build: .
+    container_name: recommendation-service
     ports:
       - "8082:8082"
     depends_on:
-        - redis
-        - rabbitmq
+      - redis
+      - rabbitmq
     env_file:
       - .env
+    networks:
+      - recommendation-network
+      - shared_network
+      - recommendation-user-network
 
 volumes:
   rabbitmq_data:
   redis_data:
+
+networks:
+  recommendation-network:
+    driver: bridge
+  recommendation-user-network:
+    external: true
+  shared_network:
+    external: true

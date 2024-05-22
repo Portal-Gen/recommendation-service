@@ -24,6 +24,6 @@ WORKDIR /app
 COPY --from=build /app/target/*-SNAPSHOT.jar /app/recommendation-service.jar
 
 # Expose the application port
-EXPOSE 8082
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-Dspring.profiles.active=release", "-jar", "/app/recommendation-service.jar"]
