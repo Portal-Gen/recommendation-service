@@ -27,6 +27,15 @@ services:
       - recommendation-network
       - shared_network
 
+  recommendation-serverless:
+    image: quangitconsult/recommendation-serverless
+    container_name: recommendation-serverless
+    restart: always
+    depends_on:
+      - rabbitmq
+    networks:
+      - recommendation-network
+
   recommendation-service:
     build: .
     container_name: recommendation-service
